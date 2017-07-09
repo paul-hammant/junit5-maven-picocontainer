@@ -12,7 +12,9 @@ package com.example.project;
 
 import org.junit.jupiter.api.extension.*;
 import org.picocontainer.DefaultPicoContainer;
+import org.picocontainer.PicoBuilder;
 import org.picocontainer.PicoContainer;
+import org.picocontainer.behaviors.Caching;
 
 public class Composition implements ParameterResolver, BeforeAllCallback, BeforeTestExecutionCallback {
 
@@ -35,18 +37,22 @@ public class Composition implements ParameterResolver, BeforeAllCallback, Before
     @Override
     public void beforeAll(ExtensionContext extensionContext) throws Exception {
         ExtensionContext.Store store = extensionContext.getParent().get().getStore();
-        DefaultPicoContainer pico = new DefaultPicoContainer();
-        store.put("parentScope", pico);
-        pico.addComponent(ParentThing.class);
+        DefaultPicoContainer pico = new DefaultPicoContainer(new Caching());
+        if (pico.getComponent("parentScope") == null) {
+            store.put("parentScope", pico);
+            pico.addComponent(ParentThing.class);
+        }
     }
 
     @Override
     public void beforeTestExecution(ExtensionContext extensionContext) throws Exception {
         ExtensionContext.Store store = extensionContext.getParent().get().getStore();
         PicoContainer parent = (PicoContainer) store.get("parentScope");
-        DefaultPicoContainer child = new DefaultPicoContainer(parent);
-        store.put("childScope", child);
-        child.addComponent(ChildThing.class);
+        if (parent.getComponent("childScope") == null) {
+            DefaultPicoContainer child = new DefaultPicoContainer(new Caching(), parent);
+            store.put("childScope", child);
+            child.addComponent(ChildThing.class);
+        }
     }
 
 }

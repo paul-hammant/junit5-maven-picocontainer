@@ -15,22 +15,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @ExtendWith(Composition.class)
 class SecondTest {
 
-	private ChildThing child;
-
-	public SecondTest(ChildThing child) {
-		this.child = child;
-	}
-
 	@Test
 	@DisplayName("My 2nd JUnit 5 and Maven and PicoContainer 😎")
-	void myFirstTest() {
+	void myFirstTest(ChildThing child) {
 		assertThat(child.toString(), equalTo("ChildThing, who's parent is ParentThing"));
 	}
 

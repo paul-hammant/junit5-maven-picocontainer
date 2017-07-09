@@ -20,15 +20,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(Composition.class)
 class FirstTest {
 
-	private ChildThing child;
-
-	public FirstTest(ChildThing child) {
-		this.child = child;
-	}
-
 	@Test
 	@DisplayName("My 1st JUnit 5 and Maven and PicoContainer 😎")
-	void myFirstTest() {
+	void myFirstTest(ChildThing child) {
 		assertThat(child.toString(), equalTo("ChildThing, who's parent is ParentThing"));
 	}
 
